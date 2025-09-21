@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentiment Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Review Sentiment Analyzer</h1>
+    <textarea id="review" placeholder="Type your review here..."></textarea>
+    <br>
+    <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function analyzeSentiment() {
+            const reviewText = document.getElementById("review").value;
+            const resultDiv = document.getElementById("result");
+
+            if (!reviewText) {
+                resultDiv.innerText = "Please enter a review.";
+                return;
+            }
+
+            try {
+                const response = await fetch("https://YOUR-APP-NAME.onrender.com/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text: reviewText })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `Sentiment: ${data.sentiment} <br> Confidence: ${data.confidence.toFixed(2)}`;
+            } catch (err) {
+                resultDiv.innerText = `Error: ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
